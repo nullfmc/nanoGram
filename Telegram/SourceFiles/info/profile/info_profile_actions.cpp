@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "info/profile/info_profile_actions.h"
 
+#include "nano/nano_options.h"
+
 #include "api/api_blocked_peers.h"
 #include "api/api_chat_participants.h"
 #include "api/api_credits.h"
@@ -1675,6 +1677,12 @@ Section DetailsFiller::makeInfo() {
 				}
 			});
 	};
+	if (Nano::Enabled(Nano::Option::ProfileId)) {
+		addInfoOneLine(
+			rpl::single(u"ID"_q),
+			rpl::single(TextWithEntities{ Nano::PeerIdText(_peer) }),
+			Nano::Text("Копировать ID", "Copy ID"));
+	}
 	if (const auto user = _peer->asUser()) {
 		if (user->session().supportMode()) {
 			addInfoLineGeneric(

@@ -7,6 +7,9 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "dialogs/ui/dialogs_layout.h"
 
+#include "nano/nano_appearance.h"
+#include "nano/nano_options.h"
+
 #include "base/options.h"
 #include "base/unixtime.h"
 #include "core/ui_integration.h"
@@ -484,7 +487,21 @@ void PaintRow(
 	if (swipeTranslation) {
 		p.translate(swipeMirrored ? swipeTranslation : -swipeTranslation, 0);
 	}
-	p.fillRect(geometry, bg);
+	if (context.active || context.selected) {
+		// nanoGram: Material pill instead of a full width highlight
+		p.fillRect(geometry, context.currentBg);
+		auto hq = PainterHighQualityEnabler(p);
+		const auto skip = style::ConvertScale(4);
+		const auto radius = style::ConvertScale(18);
+		p.setPen(Qt::NoPen);
+		p.setBrush(bg);
+		p.drawRoundedRect(
+			QRect(geometry).adjusted(skip, skip / 2, -skip, -skip / 2),
+			radius,
+			radius);
+	} else {
+		p.fillRect(geometry, bg);
+	}
 	if (!(flags & Flag::TopicJumpRipple)) {
 		auto ripple = context.active
 			? st::dialogsRippleBgActive
@@ -809,7 +826,21 @@ void PaintRow(
 			PaintDialogDate(p, entry, fakeRow, date, rectForName, context);
 		}
 
-		paintItemCallback(nameleft, namewidth);
+		if (Nano::StreamerMode()) {
+			p.setFont(st::dialogsTextFont);
+			p.setPen(context.active
+				? st::dialogsTextFgActive
+				: context.selected
+				? st::dialogsTextFgOver
+				: st::dialogsTextFg);
+			p.drawTextLeft(
+				nameleft,
+				texttop,
+				context.width,
+				Nano::Text("скрыто: режим стримера", "hidden: streamer mode"));
+		} else {
+			paintItemCallback(nameleft, namewidth);
+		}
 	} else if (entry->isPinnedDialog(context.filter)
 		&& (context.filter || !entry->fixedOnTopIndex())) {
 		auto &icon = ThreeStateIcon(

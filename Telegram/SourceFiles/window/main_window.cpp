@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/main_window.h"
 
+#include "nano/nano_app_icon.h"
+
 #include "api/api_updates.h"
 #include "storage/localstorage.h"
 #include "platform/platform_specific.h"
@@ -141,13 +143,11 @@ const char kOptionNewWindowsSizeAsFirst[] = "new-windows-size-as-first";
 const char kOptionDisableTouchbar[] = "touchbar-disabled";
 
 const QImage &Logo() {
-	static const auto result = QImage(u":/gui/art/logo_256.png"_q);
-	return result;
+	return Nano::AppIconImage(Nano::CurrentAppIcon());
 }
 
 const QImage &LogoNoMargin() {
-	static const auto result = QImage(u":/gui/art/logo_256_no_margin.png"_q);
-	return result;
+	return Nano::AppIconImageSmall(Nano::CurrentAppIcon());
 }
 
 void ConvertIconToBlack(QImage &image) {
@@ -935,7 +935,7 @@ void MainWindow::updateTitle() {
 		: Dialogs::Key();
 	const auto thread = key ? key.thread() : nullptr;
 	if (!thread) {
-		setTitle((user.isEmpty() ? u"Telegram"_q : user) + added + suffix);
+		setTitle((user.isEmpty() ? u"nanoGram"_q : user) + added + suffix);
 		return;
 	}
 	const auto history = thread->owningHistory();

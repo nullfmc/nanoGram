@@ -71,7 +71,7 @@ constexpr auto kCredentialIdSize = 16;
 constexpr auto kChallengeSize = 32;
 constexpr char kWrapLabel[] = "tdesktop-wallet-vault/windows-hello-wrap/v1";
 constexpr auto kCredentialPrefix
-	= std::wstring_view(L"TelegramDesktop.WalletVault.");
+	= std::wstring_view(L"nanoGram.WalletVault.");
 constexpr auto kPromptFocusInterval = crl::time(100);
 constexpr auto kPromptFocusAttempts = 50;
 
@@ -283,7 +283,7 @@ void FocusUnownedPrompt(int attemptsLeft = kPromptFocusAttempts) {
 [[nodiscard]] bool DebugPortable() {
 #ifdef _DEBUG
 	static const auto Result = (QDir(cWorkingDir())
-		== QDir(cExeDir() + u"TelegramForcePortable"_q));
+		== QDir(cExeDir() + u"nanoGramData"_q));
 	return Result;
 #else // _DEBUG
 	return false;

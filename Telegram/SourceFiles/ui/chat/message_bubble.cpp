@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "ui/chat/message_bubble.h"
 
+#include "nano/nano_appearance.h"
+
 #include "ui/cached_round_corners.h"
 #include "ui/image/image_prepare.h"
 #include "ui/chat/chat_style.h"
@@ -191,7 +193,7 @@ void PaintBubbleGeneric(
 	const auto rightTail = (bottomWithTailRight == Corner::Tail)
 		? paintTail({ rect.x() + rect.width(), rect.y() + rect.height() })
 		: 0;
-	if (!args.shadowed) {
+	if (!args.shadowed || !Nano::BubbleShadow()) {
 		return;
 	}
 	const auto shLeft = rect.x() + cornerSize(bottomLeft) - leftTail;

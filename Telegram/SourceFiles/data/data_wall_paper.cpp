@@ -696,10 +696,10 @@ WallPaper WallPaper::ConstructDefault() {
 	auto result = WallPaper(
 		kDefaultBackground
 	).withPatternIntensity(50).withBackgroundColors({
-		QColor(219, 221, 187),
-		QColor(107, 165, 135),
-		QColor(213, 216, 141),
-		QColor(136, 184, 132),
+		QColor(222, 210, 255),
+		QColor(176, 152, 238),
+		QColor(212, 196, 250),
+		QColor(190, 168, 242),
 	});
 	result._flags |= WallPaperFlag::Default | WallPaperFlag::Pattern;
 	return result;

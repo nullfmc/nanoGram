@@ -352,14 +352,14 @@ std::vector<EmbeddedScheme> EmbeddedThemes() {
 	return {
 		EmbeddedScheme{
 			EmbeddedType::Default,
-			qColor("9bd494"),
-			qColor("eaffdc"),
-			qColor("ffffff"),
-			qColor("eaffdc"),
-			qColor("ffffff"),
-			name(tr::lng_settings_theme_classic),
+			qColor("bfa9f5"),
+			qColor("7a5fd3"),
+			qColor("f6f1ff"),
+			qColor("7a5fd3"),
+			qColor("f6f1ff"),
+			rpl::single(u"Material"_q),
 			QString(),
-			qColor("40a7e3")
+			qColor("7657d6")
 		},
 		EmbeddedScheme{
 			EmbeddedType::DayBlue,
@@ -374,14 +374,14 @@ std::vector<EmbeddedScheme> EmbeddedThemes() {
 		},
 		EmbeddedScheme{
 			EmbeddedType::Night,
-			qColor("485761"),
-			qColor("5ca7d4"),
-			qColor("6b808d"),
-			qColor("6b808d"),
-			qColor("5ca7d4"),
-			name(tr::lng_settings_theme_tinted),
+			qColor("2a2340"),
+			qColor("6a4fc4"),
+			qColor("3a3252"),
+			qColor("3a3252"),
+			qColor("8b6fe6"),
+			rpl::single(QString::fromUtf8("Material тёмная")),
 			":/gui/night.tdesktop-theme",
-			qColor("5288c1")
+			qColor("8b6fe6")
 		},
 		EmbeddedScheme{
 			EmbeddedType::NightGreen,
@@ -415,25 +415,25 @@ std::vector<QColor> DefaultAccentColors(EmbeddedType type) {
 		};
 	case EmbeddedType::Default:
 		return {
-			qColor("45bce7"),
-			qColor("52b440"),
-			qColor("d46c99"),
-			qColor("df8a49"),
-			qColor("9978c8"),
-			qColor("c55245"),
-			qColor("687b98"),
-			qColor("dea922"),
+			qColor("7657d6"),
+			qColor("3d7be0"),
+			qColor("0f9d9a"),
+			qColor("3c9f5b"),
+			qColor("d1477e"),
+			qColor("e07b2c"),
+			qColor("d64545"),
+			qColor("6b6a75"),
 		};
 	case EmbeddedType::Night:
 		return {
-			qColor("58bfe8"),
-			qColor("466f42"),
-			qColor("aa6084"),
-			qColor("a46d3c"),
-			qColor("917bbd"),
-			qColor("ab5149"),
-			qColor("697b97"),
-			qColor("9b834b"),
+			qColor("7657d6"),
+			qColor("3d7be0"),
+			qColor("0f9d9a"),
+			qColor("3c9f5b"),
+			qColor("d1477e"),
+			qColor("e07b2c"),
+			qColor("d64545"),
+			qColor("6b6a75"),
 		};
 	case EmbeddedType::NightGreen:
 		return {

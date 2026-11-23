@@ -13,6 +13,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "intro/intro_phone.h"
 #include "intro/intro_widget.h"
 #include "intro/intro_password_check.h"
+#include "nano/nano_app_icon.h"
 #include "lang/lang_keys.h"
 #include "ui/widgets/buttons.h"
 #include "ui/widgets/labels.h"
@@ -572,10 +573,10 @@ QImage TelegramLogoImage() {
 	{
 		auto p = QPainter(&result);
 		auto hq = PainterHighQualityEnabler(p);
-		p.setBrush(QrActiveColor());
-		p.setPen(Qt::NoPen);
-		p.drawEllipse(QRect(QPoint(), size));
-		st::introQrPlane.paintInCenter(p, QRect(QPoint(), size));
+		p.setRenderHint(QPainter::SmoothPixmapTransform);
+		p.drawImage(
+			QRect(QPoint(), size),
+			Nano::AppIconImageSmall(Nano::CurrentAppIcon()));
 	}
 	return result;
 }

@@ -1,3 +1,20 @@
+# nanoGram
+
+**An unofficial Telegram client** based on [Telegram Desktop](https://github.com/telegramdesktop/tdesktop) 7.4.4, focused on a good looking interface.
+
+* Material You interface, light and dark, 8 accent colors
+* Google Sans font, 5 app icons, profile photo shapes
+* message bubbles settings, streamer mode, animation speed
+* portable: data is stored next to the exe
+* nanoGram settings: seconds in message time, ID in profiles, one-click privacy
+
+Telegram channel: [@nanogramer](https://t.me/nanogramer). All the changes are in the `nanogram` branch.
+To build it follow [docs/building-win.md](docs/building-win.md) with your own `api_id` and `api_hash`.
+With a non-English Visual Studio install its English language pack and set `VSLANG=1033`.
+
+License: GPLv3 with OpenSSL exception, like Telegram Desktop. Google Sans: SIL Open Font License 1.1.
+
+---
 # [Telegram Desktop][telegram_desktop] – Official Messenger
 
 This is the complete source code and the build instructions for the official [Telegram][telegram] messenger desktop client, based on the [Telegram API][telegram_api] and the [MTProto][telegram_proto] secure protocol.

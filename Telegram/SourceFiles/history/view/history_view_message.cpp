@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "history/view/history_view_message.h"
 
+#include "nano/nano_appearance.h"
+
 #include "api/api_suggest_post.h"
 #include "api/api_transcribes.h"
 #include "base/options.h"
@@ -6655,7 +6657,8 @@ Ui::BubbleRounding Message::countMessageRounding() const {
 		|| (rich && richMediaAtBottom())
 		|| (keyboard != nullptr)
 		|| item->isFakeAboutView()
-		|| isCommentsRootView();
+		|| isCommentsRootView()
+		|| !Nano::BubbleTails();
 	const auto right = hasRightLayout();
 	using Corner = Ui::BubbleCornerRounding;
 	return Ui::BubbleRounding{

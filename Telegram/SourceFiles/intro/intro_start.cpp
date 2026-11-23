@@ -8,6 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "intro/intro_start.h"
 
 #include "lang/lang_keys.h"
+#include "lang/lang_instance.h"
 #include "intro/intro_qr.h"
 #include "intro/intro_phone.h"
 #include "ui/widgets/buttons.h"
@@ -24,8 +25,13 @@ StartWidget::StartWidget(
 	not_null<Data*> data)
 : Step(parent, account, data, true) {
 	setMouseTracking(true);
-	setTitleText(rpl::single(u"Telegram Desktop"_q));
-	setDescriptionText(tr::lng_intro_about());
+	setTitleText(rpl::single(u"nanoGram"_q));
+	// nanoGram: cloud language packs call the app official, so don't use them
+	setDescriptionText(tr::lng_intro_about() | rpl::map([](const QString &) {
+		return Lang::GetInstance().id().startsWith(u"ru"_q)
+			? QString::fromUtf8("Добро пожаловать в nanoGram.\nНеофициальный клиент Telegram.")
+			: u"Welcome to nanoGram.\nAn unofficial Telegram client."_q;
+	}));
 	show();
 }
 

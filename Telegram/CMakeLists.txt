@@ -1757,6 +1757,16 @@ PRIVATE
     mtproto/web_proxy/web_proxy_transport.h
     mtproto/web_proxy/web_proxy_webview.cpp
     mtproto/web_proxy/web_proxy_webview.h
+    nano/nano_app_icon.cpp
+    nano/nano_app_icon.h
+    nano/nano_appearance.cpp
+    nano/nano_appearance.h
+    nano/nano_icon_picker.cpp
+    nano/nano_icon_picker.h
+    nano/nano_options.cpp
+    nano/nano_options.h
+    nano/nano_settings.cpp
+    nano/nano_settings.h
     overview/overview_checkbox.cpp
     overview/overview_checkbox.h
     overview/overview_layout.cpp
@@ -2860,7 +2870,7 @@ else()
         set(bundle_identifier "com.tdesktop.Telegram")
     endif()
     set(bundle_entitlements "Telegram.entitlements")
-    set(output_name "Telegram")
+    set(output_name "nanoGram")
 endif()
 
 if (CMAKE_GENERATOR STREQUAL Xcode)

@@ -25,6 +25,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "apiwrap.h"
 #include "api/api_peer_photo.h"
 #include "mainwindow.h"
+#include "nano/nano_app_icon.h"
+#include "ui/painter.h"
 #include "ui/boxes/confirm_box.h"
 #include "ui/text/text_utilities.h"
 #include "ui/widgets/labels.h"
@@ -475,7 +477,13 @@ void Step::paintCover(QPainter &p, int top) {
 		planeLeft += deltaLeft;
 	//	planeTop += top;
 	}
-	st::introCoverIcon.paint(p, planeLeft, planeTop, width());
+	const auto size = style::ConvertScale(112);
+	planeLeft += (st::introCoverIcon.width() - size) / 2 + st::introCoverIconLeft;
+	auto hq = PainterHighQualityEnabler(p);
+	p.setRenderHint(QPainter::SmoothPixmapTransform);
+	p.drawImage(
+		QRect(planeLeft, planeTop, size, size),
+		Nano::AppIconImage(Nano::CurrentAppIcon()));
 }
 
 int Step::contentLeft() const {

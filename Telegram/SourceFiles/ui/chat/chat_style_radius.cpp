@@ -8,6 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/chat/chat_style_radius.h"
 #include "base/options.h"
 #include "ui/chat/message_bubble.h"
+#include "nano/nano_appearance.h"
 
 #include "styles/style_chat.h"
 
@@ -33,6 +34,8 @@ int BubbleRadiusLarge() {
 	static const auto result = [] {
 		if (UseSmallMsgBubbleRadius.value()) {
 			return st::bubbleRadiusSmall;
+		} else if (const auto radius = Nano::BubbleRadius()) {
+			return int(style::ConvertScale(radius));
 		} else {
 			return st::bubbleRadiusLarge;
 		}

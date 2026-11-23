@@ -14,6 +14,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "core/update_checker.h"
 #include "core/version.h"
 #include "lang/lang_keys.h"
+#include "nano/nano_options.h"
 #include "ui/boxes/confirm_box.h"
 #include "ui/painter.h"
 #include "ui/rect.h"
@@ -36,10 +37,12 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 namespace {
 
 rpl::producer<TextWithEntities> Text1() {
-	return tr::lng_about_text1(
-		lt_api_link,
-		tr::lng_about_text1_api(tr::url(u"https://core.telegram.org/api"_q)),
-		tr::marked);
+	// nanoGram: lng_about_text1 calls the app official
+	return rpl::single(TextWithEntities{ Nano::Text(
+		"Неофициальный клиент Telegram на основе Telegram Desktop и Telegram API.\n"
+		"Шрифт Google Sans: The Google Sans Project Authors, лицензия OFL 1.1.",
+		"An unofficial Telegram client based on Telegram Desktop and Telegram API.\n"
+		"Google Sans font: The Google Sans Project Authors, OFL 1.1.") });
 }
 
 rpl::producer<TextWithEntities> Text2() {
@@ -65,7 +68,7 @@ rpl::producer<TextWithEntities> Text3() {
 } // namespace
 
 void AboutBox(not_null<Ui::GenericBox*> box) {
-	box->setTitle(u"Telegram Desktop"_q);
+	box->setTitle(u"nanoGram"_q);
 
 	auto layout = box->verticalLayout();
 

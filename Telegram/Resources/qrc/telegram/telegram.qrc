@@ -6,6 +6,16 @@
     <file alias="art/business_logo.png">../../art/business_logo.png</file>
     <file alias="art/affiliate_logo.png">../../art/affiliate_logo.png</file>
     <file alias="art/logo_256.png">../../art/logo_256.png</file>
+    <file alias="art/nano/classic.png">../../art/nano/classic.png</file>
+    <file alias="art/nano/classic_small.png">../../art/nano/classic_small.png</file>
+    <file alias="art/nano/glass.png">../../art/nano/glass.png</file>
+    <file alias="art/nano/glass_small.png">../../art/nano/glass_small.png</file>
+    <file alias="art/nano/blue.png">../../art/nano/blue.png</file>
+    <file alias="art/nano/blue_small.png">../../art/nano/blue_small.png</file>
+    <file alias="art/nano/green.png">../../art/nano/green.png</file>
+    <file alias="art/nano/green_small.png">../../art/nano/green_small.png</file>
+    <file alias="art/nano/extera.png">../../art/nano/extera.png</file>
+    <file alias="art/nano/extera_small.png">../../art/nano/extera_small.png</file>
     <file alias="art/logo_256_no_margin.png">../../art/logo_256_no_margin.png</file>
     <file alias="art/themeimage.jpg">../../art/themeimage.jpg</file>
     <file alias="art/round_placeholder.jpg">../../art/round_placeholder.jpg</file>

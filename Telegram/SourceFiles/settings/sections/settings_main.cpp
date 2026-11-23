@@ -52,6 +52,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "settings/sections/settings_business.h"
 #include "settings/sections/settings_calls.h"
 #include "settings/sections/settings_chat.h"
+#include "nano/nano_options.h"
+#include "nano/nano_settings.h"
 #include "settings/settings_codes.h"
 #include "settings/settings_faq_suggestions.h"
 #include "settings/sections/settings_credits.h"
@@ -377,6 +379,14 @@ void BuildSectionButtons(SectionBuilder &builder) {
 			.keywords = { u"profile"_q, u"edit"_q, u"information"_q },
 		});
 	}
+
+	builder.addButton({
+		.id = u"main/nanogram"_q,
+		.title = rpl::single(Nano::Text("Настройки nanoGram", "nanoGram settings")),
+		.icon = { &st::menuIconChangeColors },
+		.onClick = [=] { showOther(Nano::SettingsId()); },
+		.keywords = { u"nanogram"_q, u"icon"_q, u"seconds"_q, u"id"_q },
+	});
 
 	builder.addSectionButton({
 		.title = tr::lng_settings_section_notify(),

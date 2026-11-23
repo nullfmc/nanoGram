@@ -10,6 +10,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ui/empty_userpic.h"
 #include "ui/painter.h"
 #include "ui/image/image_prepare.h"
+#include "nano/nano_appearance.h"
 
 #include <cmath>
 
@@ -146,7 +147,8 @@ void ValidateUserpicCache(
 		|| (view.shape != shapeValue)
 		|| (cloud && !view.empty.null())
 		|| (empty && empty != view.empty.get())
-		|| (empty && view.paletteVersion != version);
+		// nanoGram: a new userpic shape changes the palette version
+		|| (view.paletteVersion != version);
 	if (!regenerate) {
 		return;
 	}
@@ -167,6 +169,8 @@ void ValidateUserpicCache(
 				Images::CornersMask(size
 					* Ui::ForumUserpicRadiusMultiplier()
 					/ style::DevicePixelRatio()));
+		} else if (Nano::CurrentUserpicShape() != Nano::UserpicShape::Circle) {
+			view.cached = Nano::ApplyUserpicShape(std::move(view.cached));
 		} else {
 			view.cached = Images::Circle(std::move(view.cached));
 		}
@@ -187,6 +191,10 @@ void ValidateUserpicCache(
 				size,
 				size,
 				size * Ui::ForumUserpicRadiusMultiplier());
+		} else if (Nano::CurrentUserpicShape() != Nano::UserpicShape::Circle) {
+			empty->paintSquare(p, 0, 0, size, size);
+			p.end();
+			view.cached = Nano::ApplyUserpicShape(std::move(view.cached));
 		} else {
 			empty->paintCircle(p, 0, 0, size, size);
 		}

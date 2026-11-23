@@ -1148,7 +1148,7 @@ private:
 	bool _notifyFromAll = true;
 	rpl::variable<bool> _nativeWindowFrame = false;
 	rpl::variable<std::optional<bool>> _systemDarkMode = std::nullopt;
-	rpl::variable<bool> _systemDarkModeEnabled = true;
+	rpl::variable<bool> _systemDarkModeEnabled = false; // nanoGram: Material is light only
 	bool _systemAccentColorEnabled = false;
 	rpl::variable<WindowTitleContent> _windowTitleContent;
 	WindowPosition _windowPosition; // per-window
@@ -1156,7 +1156,7 @@ private:
 	rpl::variable<WorkMode> _workMode = WorkMode::WindowAndTray;
 	base::flags<Calls::Group::StickedTooltip> _hiddenGroupCallTooltips;
 	CloseBehavior _closeBehavior = CloseBehavior::Quit;
-	rpl::variable<bool> _trayIconMonochrome = true;
+	rpl::variable<bool> _trayIconMonochrome = false; // nanoGram: show the chosen icon
 	rpl::variable<QString> _customDeviceModel;
 	rpl::variable<Media::RepeatMode> _playerRepeatMode;
 	rpl::variable<Media::OrderMode> _playerOrderMode;
