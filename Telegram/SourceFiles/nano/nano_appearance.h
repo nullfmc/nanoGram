@@ -54,6 +54,27 @@ void SetBubbleShadow(bool enabled);
 [[nodiscard]] bool StreamerMode();
 void SetStreamerMode(bool enabled, not_null<Main::Session*> session);
 
+// Phone: like Telegram on phones. Concept: like the nanoGram concept,
+// round bubbles without tails and shadows, a pill shaped message field.
+enum class ChatStyle {
+	Phone,
+	Concept,
+};
+[[nodiscard]] ChatStyle CurrentChatStyle();
+void SetChatStyle(ChatStyle style);
+
+// Chats, Contacts, Calls, Saved and Settings in the side bar.
+[[nodiscard]] bool NavigationRail();
+void SetNavigationRail(bool enabled);
+
+// The default wallpaper follows the accent color.
+[[nodiscard]] std::vector<QColor> WallpaperColors();
+void RefreshDefaultWallpaper();
+
+// Local notes about people and chats, nobody else sees them.
+[[nodiscard]] QString Note(uint64 peerId);
+void SetNote(uint64 peerId, const QString &text);
+
 enum class AnimationMode {
 	Normal,
 	Smooth,

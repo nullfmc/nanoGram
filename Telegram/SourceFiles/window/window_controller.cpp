@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/window_controller.h"
 
+#include "nano/nano_appearance.h"
+
 #include "api/api_updates.h"
 #include "core/application.h"
 #include "core/click_handler_types.h"
@@ -254,7 +256,8 @@ void Controller::setupSideBar() {
 		sideBarChanged();
 	}, _sessionController->lifetime());
 
-	if (_sessionController->session().settings().dialogsFiltersEnabled()
+	if ((_sessionController->session().settings().dialogsFiltersEnabled()
+			|| Nano::NavigationRail())
 		&& _sessionController->enoughSpaceForFilters()
 		&& !Core::App().settings().chatFiltersHorizontal()) {
 		_sessionController->toggleFiltersMenu(true);

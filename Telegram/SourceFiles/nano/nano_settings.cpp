@@ -417,6 +417,27 @@ void SettingsSection::setupContent() {
 	Ui::AddSkip(content);
 	Ui::AddSubsectionTitle(
 		content,
+		rpl::single(Text("Переписка", "Chat")));
+	AddChoice(
+		content,
+		Text("Стиль переписки", "Chat style"),
+		{ Text("Телефон", "Phone"), Text("Концепт", "Concept") },
+		int(CurrentChatStyle()),
+		[](int index) { SetChatStyle(ChatStyle(index)); });
+	AddToggle(
+		content,
+		Text("Панель навигации слева", "Navigation side bar"),
+		NavigationRail(),
+		[](bool enabled) { SetNavigationRail(enabled); });
+	Ui::AddSkip(content);
+	Ui::AddDividerText(content, rpl::single(Text(
+		"Концепт: круглые пузыри без хвостиков и теней и поле ввода-пилюля. "
+		"Телефон: как в Telegram на телефоне. Стиль и панель применятся после перезапуска.",
+		"Concept: round bubbles without tails and shadows, a pill shaped field. "
+		"Phone: like Telegram on phones. Applies after a restart.")));
+	Ui::AddSkip(content);
+	Ui::AddSubsectionTitle(
+		content,
 		rpl::single(Text("Пузыри сообщений", "Message bubbles")));
 	AddBubbles(content);
 	AddAnimations(content);

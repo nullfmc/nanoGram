@@ -18,7 +18,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "window/themes/window_themes_embedded.h"
 #include "settings.h"
 
+#include "data/data_wall_paper.h"
+
 #include <QtCore/QFile>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
 #include <QtCore/QSaveFile>
 
 namespace Nano {
@@ -177,6 +181,7 @@ void SetAccent(const QColor &color) {
 			break;
 		}
 	}
+	RefreshDefaultWallpaper();
 }
 
 void ToggleDarkTheme(not_null<Window::Controller*> window) {
@@ -281,6 +286,86 @@ void SetStreamerMode(bool enabled, not_null<Main::Session*> session) {
 	session->saveSettingsDelayed();
 	SetValue("streamer", enabled ? 1 : 0);
 	style::NotifyPaletteChanged();
+}
+
+ChatStyle CurrentChatStyle() {
+	return (Value("chat_style", 1) == 0) ? ChatStyle::Phone : ChatStyle::Concept;
+}
+
+void SetChatStyle(ChatStyle style) {
+	SetValue("chat_style", int(style));
+	if (style == ChatStyle::Concept) {
+		SetBubbleRadius(20);
+		SetBubbleTails(false);
+		SetBubbleShadow(false);
+	} else {
+		SetBubbleRadius(0);
+		SetBubbleTails(true);
+		SetBubbleShadow(true);
+	}
+}
+
+bool NavigationRail() {
+	return Value("navigation_rail", 1) != 0;
+}
+
+void SetNavigationRail(bool enabled) {
+	SetValue("navigation_rail", enabled ? 1 : 0);
+}
+
+std::vector<QColor> WallpaperColors() {
+	const auto accent = CurrentAccent();
+	const auto hue = std::max(accent.hslHue(), 0);
+	const auto saturation = std::min(accent.hslSaturation(), 170);
+	const auto make = [&](int lightness, int hueShift) {
+		return QColor::fromHsl((hue + hueShift + 360) % 360, saturation, lightness);
+	};
+	return { make(226, -8), make(176, 6), make(214, 12), make(194, -4) };
+}
+
+void RefreshDefaultWallpaper() {
+	using namespace Window::Theme;
+	if (Data::IsDefaultWallPaper(Background()->paper())) {
+		Background()->set(Data::DefaultWallPaper());
+	}
+}
+
+namespace {
+
+[[nodiscard]] QString NotesPath() {
+	return cWorkingDir() + u"tdata/nanogram_notes.json"_q;
+}
+
+[[nodiscard]] QJsonObject &Notes() {
+	static auto result = [] {
+		auto file = QFile(NotesPath());
+		return file.open(QIODevice::ReadOnly)
+			? QJsonDocument::fromJson(file.readAll()).object()
+			: QJsonObject();
+	}();
+	return result;
+}
+
+} // namespace
+
+QString Note(uint64 peerId) {
+	return Notes().value(QString::number(peerId)).toString();
+}
+
+void SetNote(uint64 peerId, const QString &text) {
+	const auto key = QString::number(peerId);
+	if (text.trimmed().isEmpty()) {
+		Notes().remove(key);
+	} else {
+		Notes()[key] = text.trimmed();
+	}
+	auto file = QSaveFile(NotesPath());
+	if (file.open(QIODevice::WriteOnly)) {
+		file.write(QJsonDocument(Notes()).toJson(QJsonDocument::Compact));
+		if (!file.commit()) {
+			LOG(("nanoGram Error: could not save notes."));
+		}
+	}
 }
 
 AnimationMode CurrentAnimationMode() {

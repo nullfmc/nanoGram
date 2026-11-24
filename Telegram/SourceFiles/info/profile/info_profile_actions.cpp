@@ -8,6 +8,11 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "info/profile/info_profile_actions.h"
 
 #include "nano/nano_options.h"
+#include "nano/nano_appearance.h"
+#include "ui/layers/generic_box.h"
+#include "ui/widgets/fields/input_field.h"
+#include "ui/abstract_button.h"
+#include "styles/style_widgets.h"
 
 #include "api/api_blocked_peers.h"
 #include "api/api_chat_participants.h"
@@ -1677,6 +1682,47 @@ Section DetailsFiller::makeInfo() {
 				}
 			});
 	};
+	{
+		// nanoGram: a local note, only this user sees it
+		const auto peerId = _peer->id.value;
+		const auto note = std::make_shared<rpl::variable<QString>>(Nano::Note(peerId));
+		const auto line = addInfoOneLine(
+			rpl::single(Nano::Text("Заметка (видна только тебе)", "Note (only you see it)")),
+			note->value() | rpl::map([](const QString &text) {
+				return TextWithEntities{ text.isEmpty()
+					? Nano::Text("нажми, чтобы добавить", "click to add")
+					: text };
+			}),
+			Nano::Text("Копировать заметку", "Copy note"));
+		const auto window = _controller->parentController();
+		const auto edit = [=] {
+			window->show(Box([=](not_null<Ui::GenericBox*> box) {
+				box->setTitle(rpl::single(Nano::Text("Заметка", "Note")));
+				const auto field = box->addRow(object_ptr<Ui::InputField>(
+					box,
+					st::defaultInputField,
+					Ui::InputField::Mode::MultiLine,
+					rpl::single(Nano::Text("Только для тебя", "Only for you")),
+					note->current()));
+				box->setFocusCallback([=] { field->setFocusFast(); });
+				box->addButton(rpl::single(Nano::Text("Сохранить", "Save")), [=] {
+					Nano::SetNote(peerId, field->getLastText());
+					*note = Nano::Note(peerId);
+					box->closeBox();
+				});
+				box->addButton(rpl::single(Nano::Text("Отмена", "Cancel")), [=] {
+					box->closeBox();
+				});
+			}));
+		};
+		const auto button = Ui::CreateChild<Ui::AbstractButton>(line.text.get());
+		line.text->sizeValue(
+		) | rpl::on_next([=](QSize size) {
+			button->setGeometry(QRect(QPoint(), size));
+		}, button->lifetime());
+		button->setClickedCallback(edit);
+		button->show();
+	}
 	if (Nano::Enabled(Nano::Option::ProfileId)) {
 		addInfoOneLine(
 			rpl::single(u"ID"_q),

@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "data/data_wall_paper.h"
 
+#include "nano/nano_appearance.h"
+
 #include "data/data_document.h"
 #include "data/data_file_origin.h"
 #include "data/data_session.h"
@@ -695,12 +697,7 @@ WallPaper WallPaper::FromEmojiId(const QString &emojiId) {
 WallPaper WallPaper::ConstructDefault() {
 	auto result = WallPaper(
 		kDefaultBackground
-	).withPatternIntensity(50).withBackgroundColors({
-		QColor(222, 210, 255),
-		QColor(176, 152, 238),
-		QColor(212, 196, 250),
-		QColor(190, 168, 242),
-	});
+	).withPatternIntensity(50).withBackgroundColors(Nano::WallpaperColors());
 	result._flags |= WallPaperFlag::Default | WallPaperFlag::Pattern;
 	return result;
 }

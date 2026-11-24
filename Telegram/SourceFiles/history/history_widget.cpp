@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "history/history_widget.h"
 
+#include "nano/nano_appearance.h"
+
 #include "api/api_compose_with_ai.h"
 #include "api/api_editing.h"
 #include "api/api_bot.h"
@@ -11513,6 +11515,25 @@ void HistoryWidget::drawField(Painter &p, const QRect &rect) {
 	p.setInactive(
 		controller()->isGifPausedAtLeastFor(Window::GifPauseReason::Any));
 	p.fillRect(myrtlrect(0, backy, width(), backh), st::historyReplyBg);
+	if (Nano::CurrentChatStyle() == Nano::ChatStyle::Concept
+		&& _attachToggle
+		&& _tabbedSelectorToggle
+		&& !_attachToggle->isHidden()) {
+		// nanoGram: the field is a pill on a slightly darker strip
+		const auto top = _field->y() - st::historySendPadding;
+		const auto height = fieldHeight() + 2 * st::historySendPadding;
+		p.fillRect(myrtlrect(0, top, width(), height), st::windowBgOver);
+		const auto skip = style::ConvertScale(5);
+		const auto left = _attachToggle->x() + skip;
+		const auto right = _tabbedSelectorToggle->x()
+			+ _tabbedSelectorToggle->width()
+			- skip;
+		const auto pill = QRect(left, top + skip, right - left, height - 2 * skip);
+		auto hq = PainterHighQualityEnabler(p);
+		p.setPen(Qt::NoPen);
+		p.setBrush(st::historyComposeAreaBg);
+		p.drawRoundedRect(myrtlrect(pill), pill.height() / 2., pill.height() / 2.);
+	}
 
 	const auto media = (!_previewDrawPreview && drawMsgText)
 		? drawMsgText->media()
