@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/window_session_controller.h"
 
+#include "nano/nano_appearance.h"
+
 #include "apiwrap.h"
 #include "api/api_cloud_password.h"
 #include "api/api_text_entities.h"
@@ -1832,7 +1834,11 @@ SessionController::SessionController(
 	}, lifetime());
 
 	const auto processFiltersMenu = [this] {
-		if (SessionNavigation::session().data().chatsFilters().has()) {
+		if (Nano::NavigationRail()) {
+			content()->toggleFiltersMenu(
+				SessionNavigation::session().data().chatsFilters().has());
+			toggleFiltersMenu(enoughSpaceForFilters());
+		} else if (SessionNavigation::session().data().chatsFilters().has()) {
 			const auto isHorizontal
 				= Core::App().settings().chatFiltersHorizontal()
 					|| !enoughSpaceForFilters();

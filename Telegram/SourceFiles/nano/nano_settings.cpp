@@ -11,6 +11,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 #include "api/api_user_privacy.h"
 #include "apiwrap.h"
+#include "core/application.h"
 #include "core/version.h"
 #include "main/main_session.h"
 #include "nano/nano_app_icon.h"
@@ -141,7 +142,7 @@ void AddDarkTheme(
 	) | rpl::filter([](bool dark) {
 		return dark != Window::Theme::IsNightMode();
 	}) | rpl::on_next([=] {
-		ToggleDarkTheme(&controller->window());
+		ToggleDarkThemeSmooth(&controller->window());
 	}, button->lifetime());
 }
 
@@ -394,6 +395,13 @@ void SettingsSection::setupContent() {
 	const auto content = Ui::CreateChild<Ui::VerticalLayout>(this);
 
 	AddLogo(content, [=] { showOther(WaffleSection::Id()); });
+	{
+		const auto restart = ::Settings::AddButtonWithIcon(
+			content,
+			rpl::single(Text("Перезапустить nanoGram", "Restart nanoGram")),
+			st::settingsButtonActive);
+		restart->setClickedCallback([] { Core::Restart(); });
+	}
 	Ui::AddDivider(content);
 
 	Ui::AddSkip(content);
@@ -406,6 +414,11 @@ void SettingsSection::setupContent() {
 		content,
 		rpl::single(Text("Акцент", "Accent")));
 	AddAccents(content);
+	AddToggle(
+		content,
+		Text("Обои под цвет акцента", "Wallpaper for the accent"),
+		AccentWallpapers(),
+		[](bool enabled) { SetAccentWallpapers(enabled); });
 	Ui::AddSkip(content);
 	Ui::AddSubsectionTitle(
 		content,

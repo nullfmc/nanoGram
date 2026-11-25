@@ -19,6 +19,14 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "settings.h"
 
 #include "data/data_wall_paper.h"
+#include "mainwindow.h"
+#include "ui/effects/animations.h"
+#include "ui/rp_widget.h"
+#include "ui/ui_utility.h"
+#include "window/window_controller.h"
+#include "styles/style_basic.h"
+
+#include <array>
 
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
@@ -181,7 +189,7 @@ void SetAccent(const QColor &color) {
 			break;
 		}
 	}
-	RefreshDefaultWallpaper();
+	ApplyAccentWallpaper();
 }
 
 void ToggleDarkTheme(not_null<Window::Controller*> window) {
@@ -328,6 +336,106 @@ void RefreshDefaultWallpaper() {
 	if (Data::IsDefaultWallPaper(Background()->paper())) {
 		Background()->set(Data::DefaultWallPaper());
 	}
+}
+
+bool AccentWallpapers() {
+	return Value("accent_wallpapers", 1) != 0;
+}
+
+void SetAccentWallpapers(bool enabled) {
+	SetValue("accent_wallpapers", enabled ? 1 : 0);
+	if (enabled) {
+		ApplyAccentWallpaper();
+	}
+}
+
+void ApplyAccentWallpaper() {
+	if (!AccentWallpapers()) {
+		return;
+	}
+	static const auto names = std::array<const char*, 8>{
+		"violet", "blue", "teal", "green", "pink", "orange", "red", "graphite",
+	};
+	const auto accents = MaterialAccents();
+	const auto i = ranges::find(accents, CurrentAccent());
+	const auto index = (i != end(accents)) ? int(i - begin(accents)) : 0;
+	const auto path = u":/gui/art/nano/wallpapers/"_q
+		+ QString::fromLatin1(names[index])
+		+ (Window::Theme::IsNightMode() ? u"-dark.png"_q : u"-light.png"_q);
+	auto image = QImage(path);
+	if (image.isNull()) {
+		LOG(("nanoGram Error: no wallpaper %1").arg(path));
+		return;
+	}
+	using namespace Window::Theme;
+	Background()->set(Data::CustomWallPaper(), std::move(image));
+	Background()->setTile(false);
+}
+
+void AdjustIncomingBubbles() {
+	if (CurrentChatStyle() != ChatStyle::Concept) {
+		return;
+	}
+	const auto mix = [](QColor a, QColor b, float64 part) {
+		return QColor(
+			int(a.red() + (b.red() - a.red()) * part),
+			int(a.green() + (b.green() - a.green()) * part),
+			int(a.blue() + (b.blue() - a.blue()) * part));
+	};
+	const auto background = st::windowBg->c;
+	const auto accent = st::windowBgActive->c;
+	const auto dark = background.lightness() < 128;
+	const auto set = [&](const char *name, float64 part) {
+		const auto color = mix(background, accent, part);
+		style::main_palette::setColor(
+			QLatin1String(name),
+			uchar(color.red()),
+			uchar(color.green()),
+			uchar(color.blue()),
+			uchar(255));
+	};
+	// a secondary tone of the accent, own bubbles stay saturated
+	set("msgInBg", dark ? 0.22 : 0.16);
+	set("msgInBgSelected", dark ? 0.32 : 0.26);
+}
+
+void ToggleDarkThemeSmooth(not_null<Window::Controller*> window) {
+	const auto widget = window->widget();
+	auto snapshot = Ui::GrabWidget(widget);
+	ToggleDarkTheme(window);
+
+	const auto overlay = Ui::CreateChild<Ui::RpWidget>(widget.get());
+	overlay->setAttribute(Qt::WA_TransparentForMouseEvents);
+	overlay->setGeometry(widget->rect());
+	struct State {
+		QPixmap snapshot;
+		Ui::Animations::Simple fade;
+	};
+	const auto state = overlay->lifetime().make_state<State>();
+	state->snapshot = std::move(snapshot);
+	overlay->paintRequest(
+	) | rpl::on_next([=] {
+		auto p = QPainter(overlay);
+		p.setOpacity(state->fade.value(0.));
+		p.drawPixmap(0, 0, state->snapshot);
+	}, overlay->lifetime());
+	overlay->show();
+	overlay->raise();
+	state->fade.start([=] {
+		overlay->update();
+		if (!state->fade.animating()) {
+			crl::on_main(overlay, [=] { delete overlay; });
+		}
+	}, 1., 0., 450, anim::easeOutCubic);
+}
+
+void StartAppearance() {
+	static auto lifetime = rpl::lifetime();
+	Window::Theme::IsNightModeValue(
+	) | rpl::skip(1) | rpl::on_next([] {
+		// the theme switch finishes later, then the palette is ready
+		crl::on_main([] { ApplyAccentWallpaper(); });
+	}, lifetime);
 }
 
 namespace {

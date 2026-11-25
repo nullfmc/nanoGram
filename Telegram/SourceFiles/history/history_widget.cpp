@@ -11515,24 +11515,56 @@ void HistoryWidget::drawField(Painter &p, const QRect &rect) {
 	p.setInactive(
 		controller()->isGifPausedAtLeastFor(Window::GifPauseReason::Any));
 	p.fillRect(myrtlrect(0, backy, width(), backh), st::historyReplyBg);
-	if (Nano::CurrentChatStyle() == Nano::ChatStyle::Concept
-		&& _attachToggle
-		&& _tabbedSelectorToggle
-		&& !_attachToggle->isHidden()) {
-		// nanoGram: the field is a pill on a slightly darker strip
-		const auto top = _field->y() - st::historySendPadding;
-		const auto height = fieldHeight() + 2 * st::historySendPadding;
-		p.fillRect(myrtlrect(0, top, width(), height), st::windowBgOver);
-		const auto skip = style::ConvertScale(5);
-		const auto left = _attachToggle->x() + skip;
-		const auto right = _tabbedSelectorToggle->x()
-			+ _tabbedSelectorToggle->width()
-			- skip;
-		const auto pill = QRect(left, top + skip, right - left, height - 2 * skip);
-		auto hq = PainterHighQualityEnabler(p);
-		p.setPen(Qt::NoPen);
-		p.setBrush(st::historyComposeAreaBg);
-		p.drawRoundedRect(myrtlrect(pill), pill.height() / 2., pill.height() / 2.);
+	{
+		// nanoGram: the buttons and the field paint their own background,
+		// so the pill is an outline drawn above them
+		auto outline = findChild<Ui::RpWidget*>(
+			u"nanoPill"_q,
+			Qt::FindDirectChildrenOnly);
+		const auto conceptStyle = (Nano::CurrentChatStyle() == Nano::ChatStyle::Concept)
+			&& _attachToggle
+			&& _tabbedSelectorToggle
+			&& !_attachToggle->isHidden();
+		if (conceptStyle && !outline) {
+			outline = Ui::CreateChild<Ui::RpWidget>(this);
+			outline->setObjectName(u"nanoPill"_q);
+			outline->setAttribute(Qt::WA_TransparentForMouseEvents);
+			const auto raw = outline;
+			outline->paintRequest(
+			) | rpl::on_next([=] {
+				auto q = QPainter(raw);
+				auto hq = PainterHighQualityEnabler(q);
+				auto color = st::windowBgActive->c;
+				color.setAlphaF(0.45);
+				const auto line = style::ConvertScale(1.5);
+				q.setPen(QPen(color, line));
+				q.setBrush(Qt::NoBrush);
+				const auto r = QRectF(raw->rect()).adjusted(line, line, -line, -line);
+				q.drawRoundedRect(r, r.height() / 2., r.height() / 2.);
+			}, raw->lifetime());
+		}
+		if (outline) {
+			if (conceptStyle) {
+				const auto top = _field->y() - st::historySendPadding;
+				const auto height = fieldHeight() + 2 * st::historySendPadding;
+				const auto skip = style::ConvertScale(4);
+				const auto left = _attachToggle->x() + skip;
+				const auto right = _tabbedSelectorToggle->x()
+					+ _tabbedSelectorToggle->width()
+					- skip;
+				const auto geometry = myrtlrect(
+					QRect(left, top + skip, right - left, height - 2 * skip));
+				if (outline->geometry() != geometry) {
+					outline->setGeometry(geometry);
+				}
+				if (outline->isHidden()) {
+					outline->show();
+				}
+				outline->raise();
+			} else if (!outline->isHidden()) {
+				outline->hide();
+			}
+		}
 	}
 
 	const auto media = (!_previewDrawPreview && drawMsgText)

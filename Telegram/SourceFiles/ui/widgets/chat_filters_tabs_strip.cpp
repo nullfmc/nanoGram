@@ -26,6 +26,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "settings/sections/settings_folders.h"
 #include "ui/widgets/menu/menu_action.h"
 #include "ui/filter_icons.h"
+#include "ui/effects/animations.h"
 #include "ui/power_saving.h"
 #include "ui/ui_utility.h"
 #include "ui/widgets/chat_filters_tabs_slider_reorder.h"
@@ -333,6 +334,11 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 			});
 	}
 	wrap->toggle(false, anim::type::instant);
+	struct Wheel {
+		Ui::Animations::Simple animation;
+		int target = 0;
+	};
+	const auto wheel = wrap->lifetime().make_state<Wheel>();
 	scroll->setCustomWheelProcess([=](not_null<QWheelEvent*> e) {
 		const auto pixelDelta = e->pixelDelta();
 		const auto angleDelta = e->angleDelta();
@@ -340,8 +346,22 @@ not_null<Ui::RpWidget*> AddChatFiltersTabsStrip(
 			return false;
 		}
 		const auto bar = scroll->horizontalScrollBar();
-		const auto y = pixelDelta.y() ? pixelDelta.y() : angleDelta.y();
-		bar->setValue(bar->value() - y);
+		if (pixelDelta.y()) {
+			bar->setValue(bar->value() - pixelDelta.y());
+			return true;
+		}
+		// nanoGram: a mouse wheel notch glides the folders sideways
+		const auto from = wheel->animation.animating()
+			? wheel->target
+			: bar->value();
+		wheel->target = std::clamp(
+			from - angleDelta.y(),
+			bar->minimum(),
+			bar->maximum());
+		wheel->animation.stop();
+		wheel->animation.start([=](float64 value) {
+			bar->setValue(int(base::SafeRound(value)));
+		}, bar->value(), wheel->target, 200, anim::easeOutCubic);
 		return true;
 	});
 

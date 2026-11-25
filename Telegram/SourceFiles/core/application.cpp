@@ -323,6 +323,7 @@ void Application::run() {
 	style::SetCustomFont(settings().customFontFamily());
 	style::internal::StartFonts();
 	Nano::ApplyAnimationMode();
+	Nano::StartAppearance();
 
 	Test::ApplyStartupOverrides();
 

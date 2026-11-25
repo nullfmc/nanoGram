@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "history/view/history_view_element.h"
 
+#include "nano/nano_appearance.h"
+
 #include "apiwrap.h"
 #include "api/api_transcribes.h"
 #include "history/view/history_view_service_message.h"
@@ -2873,7 +2875,8 @@ bool Element::hasOutLayout() const {
 
 bool Element::hasRightLayout() const {
 	return hasOutLayout()
-		&& (_delegate->elementChatMode() != ElementChatMode::Wide);
+		&& ((_delegate->elementChatMode() != ElementChatMode::Wide)
+			|| Nano::CurrentChatStyle() == Nano::ChatStyle::Concept);
 }
 
 bool Element::drawBubble() const {

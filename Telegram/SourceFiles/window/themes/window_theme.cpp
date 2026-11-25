@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "window/themes/window_theme.h"
 
+#include "nano/nano_appearance.h"
+
 #include "window/themes/window_theme_preview.h"
 #include "window/themes/window_themes_chat.h"
 #include "window/themes/window_themes_embedded.h"
@@ -1111,6 +1113,7 @@ void ChatBackground::restoreAdjustableColors() {
 
 void ChatBackground::setTestingTheme(Instance &&theme) {
 	style::main_palette::apply(theme.palette);
+	Nano::AdjustIncomingBubbles();
 	saveAdjustableColors();
 
 	auto switchToThemeBackground = !theme.background.isNull()
@@ -1153,6 +1156,7 @@ void ChatBackground::setTestingDefaultTheme() {
 void ChatBackground::applyDefaultThemeAccentColorizer() {
 	const auto colorizer = ColorizerForTheme(QString());
 	style::main_palette::reset(colorizer);
+	Nano::AdjustIncomingBubbles();
 	if (colorizer) {
 		auto reference = style::palette();
 		reference.finalize();

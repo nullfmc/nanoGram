@@ -3916,7 +3916,8 @@ void Message::unloadHeavyPart() {
 }
 
 bool Message::hasFromPhoto() const {
-	if (isHidden()) {
+	if (isHidden()
+		|| Nano::CurrentChatStyle() == Nano::ChatStyle::Concept) {
 		return false;
 	}
 	switch (context()) {

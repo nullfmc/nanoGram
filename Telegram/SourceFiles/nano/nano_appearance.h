@@ -71,6 +71,20 @@ void SetNavigationRail(bool enabled);
 [[nodiscard]] std::vector<QColor> WallpaperColors();
 void RefreshDefaultWallpaper();
 
+// Material 3 wallpapers made for every accent, light and dark.
+[[nodiscard]] bool AccentWallpapers();
+void SetAccentWallpapers(bool enabled);
+void ApplyAccentWallpaper();
+
+// Incoming bubbles in a light tone of the accent, called after a palette change.
+void AdjustIncomingBubbles();
+
+// Switches the theme under a fading snapshot of the window.
+void ToggleDarkThemeSmooth(not_null<Window::Controller*> window);
+
+// Subscriptions that live for the whole app, called once on start.
+void StartAppearance();
+
 // Local notes about people and chats, nobody else sees them.
 [[nodiscard]] QString Note(uint64 peerId);
 void SetNote(uint64 peerId, const QString &text);

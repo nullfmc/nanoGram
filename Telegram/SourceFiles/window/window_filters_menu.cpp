@@ -169,6 +169,11 @@ void FiltersMenu::setup() {
 		add(Nano::Text("Настройки", "Settings"), st::menuIconSettings, [=] {
 			session->showSettings();
 		});
+		const auto window = &_session->window();
+		add(Nano::Text("Тема", "Theme"), st::menuIconNightMode, [=] {
+			Nano::ToggleDarkThemeSmooth(window);
+		});
+		rail->show();
 	}
 	_parent->heightValue(
 	) | rpl::on_next([=](int height) {
@@ -379,7 +384,8 @@ bool FiltersMenu::listFocused() const {
 
 void FiltersMenu::refresh() {
 	const auto filters = &_session->session().data().chatsFilters();
-	if (!filters->has() || _ignoreRefresh) {
+	// nanoGram: folders live on top, the side bar is for navigation
+	if (!filters->has() || _ignoreRefresh || Nano::NavigationRail()) {
 		return;
 	}
 	const auto oldTop = _scroll.scrollTop();

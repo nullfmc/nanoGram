@@ -7,6 +7,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "dialogs/dialogs_widget.h"
 
+#include "nano/nano_appearance.h"
+
 #include "base/call_delayed.h"
 #include "base/qt/qt_key_modifiers.h"
 #include "base/options.h"
@@ -625,6 +627,7 @@ Widget::Widget(
 
 	if (session().settings().dialogsFiltersEnabled()
 		&& (Core::App().settings().chatFiltersHorizontal()
+			|| Nano::NavigationRail()
 			|| !controller->enoughSpaceForFilters())) {
 		toggleFiltersMenu(true);
 	}
